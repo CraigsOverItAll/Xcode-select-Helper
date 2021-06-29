@@ -2,6 +2,9 @@
 # Set Xcode paths etc, to the Current Xcode or a previous version
 version="1.4.0"
 
+# Target Xcode
+targetName=''
+
 # Bold and Normal markers
 bold=$(tput bold)
 normal=$(tput sgr0)
@@ -51,11 +54,44 @@ function printVersion {
   echo $bold"x Version "$normal$version$e
 }
 
+function swapToXcode {
+  if [[ -d /Applications/Xcode\ $targetName.app ]]
+    then
+      sudo xcode-select -s /Applications/Xcode\ $targetName.app/Contents/Developer/
+  elif [[ -z $2 ]] && [[ -d /Applications/Xcode-$targetName.app ]]
+    then
+      sudo xcode-select -s /Applications/Xcode-$targetName.app/Contents/Developer/
+  elif [[ -z $2 ]] && [[ -d /Applications/Xcode_$targetName.app ]]
+    then
+      sudo xcode-select -s /Applications/Xcode_$targetName.app/Contents/Developer/
+  else
+      printSuffixNotFound
+      exit(0)
+  fi
+
+  printSwappedMsg
+}
+
+function printSuffixNotFound {
+      echo $orange"Xcode suffix not found: $targetName"$e
+      echo
+}
+
+function printUnsupportedOption {
+      echo $orange"Unsupported option(s) supplied: $@"$e
+      echo
+      printHelp
+}
+
 function printHelp {
+  printVersion
   echo
   echo $bold"Usage:"$normal" x [-p --current] [-d] [NN.N]"
   echo
   echo $bold"Options"$normal
+  echo $green"\t-b"$e
+  echo $green"\t--beta\tSwaps to the currently installed beta of Xcode (typically called Xcode-beta.app)"$e
+  echo
   echo $green"\t-p"$e
   echo $green"\t--current\tPrints the current Xcode path"$e
   echo
@@ -87,12 +123,11 @@ function printHelp {
   echo
   echo $bold"Examples:"$normal
   echo "\t$: x\n\tCurrent Xcode (10.2.1) is at:\n\t/Applications/Xcode.app"
-  echo "\t$: x\n\tCurrent Xcode (12.5) is at: /Applications/Xcode.app\n\tApple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55) Target: x86_64-apple-darwin20.5.0\n\txcode-select version 2384."
-darwin20.5.0"
+  echo "\t$: x\n\tCurrent Xcode (12.5) is at: /Applications/Xcode.app\n\tApple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55) Target: x86_64-apple-darwin20.5.0\n\txcode-select version 2384. darwin20.5.0"
   echo
   echo "\t$: x 9.4\n\tSwapped to Xcode 9.4 at:\n\t/Applications/Xcode 9.4.app"
   echo
-  echo "\t$: x beta\n\tSwapped to Xcode 13.0 at:\n\t/Applications/Xcode-beta.app"
+  echo "\t$: x -b\n\tSwapped to Xcode 13.0 at:\n\t/Applications/Xcode-beta.app"
   echo "\t$: x -s\n\tswift-driver version: 1.26 Apple Swift version 5.5 (swiftlang-1300.0.19.104 clang-1300.0.18.4) Target: x86_64-apple-macosx11.0"
   echo
   echo
@@ -112,6 +147,10 @@ elif [[ -n $1 ]]
       sudo xcode-select -r
       echo "Reset to default Xcode ("$(currentXcodeVersion)") at: "
       currentXcodePath
+    elif [[ $1 == "-b" ]] || [[ $1 == "--beta" ]]
+      then
+      targetName=beta
+      swapToXcode
     elif [[ $1 == "-p" ]] || [[ $1 == "--current" ]]
       then
       currentXcodePath
@@ -131,25 +170,14 @@ elif [[ -n $1 ]]
       then
         echo $(printVersion)" using:"
         printXcodeSelectVersion
-    elif [[ -z $2 ]] && [[ -d /Applications/Xcode\ $1.app ]]
-      then
-        sudo xcode-select -s /Applications/Xcode\ $1.app/Contents/Developer/
-        printSwappedMsg
-    elif [[ -z $2 ]] && [[ -d /Applications/Xcode-$1.app ]]
-      then
-        sudo xcode-select -s /Applications/Xcode-$1.app/Contents/Developer/
-        printSwappedMsg
-    elif [[ -z $2 ]] && [[ -d /Applications/Xcode_$1.app ]]
-      then
-        sudo xcode-select -s /Applications/Xcode_$1.app/Contents/Developer/
-        printSwappedMsg
     elif [[ $1 = "-h" ]] || [[ $1 = "--help" ]]
-    then
-      printVersion
-      printHelp
+      then
+        printHelp | less -r
+    elif [[ -z $2 ]]
+      then
+        targetName=$1
+        swapToXcode
     else
-      echo $orange"Unsupported option(s) supplied: $@"$e
-      echo
-      printHelp
+      printUnsupportedOption
     fi
 fi
