@@ -13,60 +13,75 @@ Simply copy it to your shell's path (probably where you keep your other executab
 
 `chmod +x x`
 
-You can confirm it's working by running it without any options, to see your currently selected version of Xcode:
+You can confirm it's working by running it without any options, to see your currently selected version of Xcode, and the versions of `xcode-select` and the `swift-driver`:
 
-```
-% x                                                                                                                                       🚨 develop/… 
-Current Xcode (12.5) is at :
-/Applications/Xcode-beta.app
+```shell
+$: x
+Current Xcode (15.3) is at:
+/Applications/Xcode.app
+swift-driver version: 1.90.11.1 Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4) Target: arm64-apple-macosx14.0
+xcode-select version 2406.
 ```
 
 Then read the help file:
 
-```
- % x -h                                                                                                                                    🚨 develop/… 
-
-x (1.3.2)
+```shell
+ x Version 1.4.2
 
 Usage: x [-p --current] [-d] [NN.N]
 
 Options
-	-p
-	--current	Prints the current Xcode path
+       -b
+       --beta  Swaps to the currently installed beta of Xcode (typically called Xcode-beta.app)
 
-	-d
-	--default	Set Xcode path to the current Xcode (i.e. /Applications/Xcode.app )
+       -p
+       --current       Prints the current Xcode path
 
-	NN.N or AAAA
-	Where NN.N (or AAAA) is a value like 9.4, 10.0 or 11GM2 it will look for a version of Xcode with
-	a matching name and if it exists set the Xcode path to it. It will also look for hypdens '-' or
-	underscores '_' in the name like 'Xcode-beta'.
+       -d
+       --default       Set Xcode path to the current Xcode (i.e. /Applications/Xcode.app )
 
-	-h
-	--help	Shows this help screen.
+       NN.N or AAAA
+       Where NN.N (or AAAA) is a value like 9.4, 10.0 or 11GM2 it will look for a version of Xcode with
+       a matching name and if it exists set the Xcode path to it. It will also look for hyphens '-' or
+       underscores '_' in the name like 'Xcode-beta' (Apples current beta naming convention) so you can.
+       simple type 'x beta' to swap to the current beta release.
 
-	-v
-	--version	Shows the current version of this script.
+       -i
+       --install       Uses xcode-select to open a dialog for installation of the command line developer tools
+
+       -s
+       --swift Equivalent to swift --version this help screen.
+
+       -x
+       --xcodeversion  Equivalent to xcodebuild -version
+
+       -h
+       --help  Shows this help screen.
+
+       -v
+       --version       Shows the current version of this script.
+       -vv
+       --vversion      Shows the verbose version of this script.
 
 Examples:
-	$: x
-	Current Xcode (10.2.1) is at:
-	/Applications/Xcode.app
+        $: x
+Current Xcode (15.3) is at:
+/Applications/Xcode.app
+swift-driver version: 1.90.11.1 Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4) Target: arm64-apple-macosx14.0
+xcode-select version 2406.
 
-	$: x -d
-	Reset to default Xcode (10.3) at:
-	/Applications/Xcode.app
+        $: x 9.4
+        Swapped to Xcode 9.4 at:
+        /Applications/Xcode 9.4.app
 
-	$: x 9.4
-	Swapped to Xcode 9.4 at:
-	/Applications/Xcode 9.4.app
-
-	$: x beta
-	Swapped to Xcode 11.0 at:
-	/Applications/Xcode-beta.app
+        $: x -b
+        Swapped to Xcode 15.4 at:
+        /Applications/Xcode-beta.app
+        $: x -s
+swift-driver version: 1.90.11.1 Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4) Target: arm64-apple-macosx14.0
 
 
-Current Xcode (12.5) is at:
-/Applications/Xcode-beta.app
+Current Xcode (15.3) is at:
+/Applications/Xcode.app
 
 ```
