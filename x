@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Set Xcode paths etc, to the Current Xcode or a previous version
-version="1.4.0"
+version="1.4.1"
 
 # Target Xcode
 targetName=''
@@ -169,6 +169,9 @@ elif [[ -n $1 ]]
     elif [[ $1 == "-vv" ]] || [[ $1 == "--vversion" ]]
       then
         echo $(printVersion)" using:"
+        echo "Xcode $(currentXcodeVersion) (at: $(currentXcodePath))"
+        printSwiftVersion
+        xcodeBuildVersion
         printXcodeSelectVersion
     elif [[ $1 = "-h" ]] || [[ $1 = "--help" ]]
       then
