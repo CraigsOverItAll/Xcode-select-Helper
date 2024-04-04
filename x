@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Set Xcode paths etc, to the Current Xcode or a previous version
-version="1.4.1"
+version="1.4.2"
 
 # Target Xcode
 targetName=''
@@ -135,52 +135,57 @@ function printHelp {
 }
 
 # The actual useful stuff
-if [[ -z $1 ]]
+if which xcode-select >/dev/null
   then
-  printCurrentXcode
-  printSwiftVersion
-  printXcodeSelectVersion
-elif [[ -n $1 ]]
-  then
-    if [[ $1 = "-d" ]] || [[ $1 = "--default" ]] || [[ $1 = "-r" ]] || [[ $1 = "--reset" ]]
-    then
-      sudo xcode-select -r
-      echo "Reset to default Xcode ("$(currentXcodeVersion)") at: "
-      currentXcodePath
-    elif [[ $1 == "-b" ]] || [[ $1 == "--beta" ]]
+    if [[ -z $1 ]]
       then
-      targetName=beta
-      swapToXcode
-    elif [[ $1 == "-p" ]] || [[ $1 == "--current" ]]
-      then
-      currentXcodePath
-    elif [[ $1 == "-i" ]] || [[ $1 == "--install" ]]
-      then
-      xcode-select --install
-    elif [[ $1 == "-s" ]] || [[ $1 == "--swift" ]]
-      then
+      printCurrentXcode
       printSwiftVersion
-    elif [[ $1 == "-x" ]] || [[ $1 == "--xcodeversion" ]]
+      printXcodeSelectVersion
+    elif [[ -n $1 ]]
       then
-        xcodeBuildVersion
-    elif [[ $1 == "-v" ]] || [[ $1 == "--version" ]]
-      then
-        printVersion
-    elif [[ $1 == "-vv" ]] || [[ $1 == "--vversion" ]]
-      then
-        echo $(printVersion)" using:"
-        echo "Xcode $(currentXcodeVersion) (at: $(currentXcodePath))"
-        printSwiftVersion
-        xcodeBuildVersion
-        printXcodeSelectVersion
-    elif [[ $1 = "-h" ]] || [[ $1 = "--help" ]]
-      then
-        printHelp | less -r
-    elif [[ -z $2 ]]
-      then
-        targetName=$1
-        swapToXcode
-    else
-      printUnsupportedOption
+        if [[ $1 = "-d" ]] || [[ $1 = "--default" ]] || [[ $1 = "-r" ]] || [[ $1 = "--reset" ]]
+        then
+          sudo xcode-select -r
+          echo "Reset to default Xcode ("$(currentXcodeVersion)") at: "
+          currentXcodePath
+        elif [[ $1 == "-b" ]] || [[ $1 == "--beta" ]]
+          then
+          targetName=beta
+          swapToXcode
+        elif [[ $1 == "-p" ]] || [[ $1 == "--current" ]]
+          then
+          currentXcodePath
+        elif [[ $1 == "-i" ]] || [[ $1 == "--install" ]]
+          then
+          xcode-select --install
+        elif [[ $1 == "-s" ]] || [[ $1 == "--swift" ]]
+          then
+          printSwiftVersion
+        elif [[ $1 == "-x" ]] || [[ $1 == "--xcodeversion" ]]
+          then
+            xcodeBuildVersion
+        elif [[ $1 == "-v" ]] || [[ $1 == "--version" ]]
+          then
+            printVersion
+        elif [[ $1 == "-vv" ]] || [[ $1 == "--vversion" ]]
+          then
+            echo $(printVersion)" using:"
+            echo "Xcode $(currentXcodeVersion) (at: $(currentXcodePath))"
+            printSwiftVersion
+            xcodeBuildVersion
+            printXcodeSelectVersion
+        elif [[ $1 = "-h" ]] || [[ $1 = "--help" ]]
+          then
+            printHelp | less -r
+        elif [[ -z $2 ]]
+          then
+            targetName=$1
+            swapToXcode
+        else
+          printUnsupportedOption
+        fi
     fi
+else
+  echo "Xcode-select not found. If Xcode is installed launch Xcode and install tools when prompted."
 fi
